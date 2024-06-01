@@ -2,6 +2,7 @@ package com.appsdeveloperblog.photoapp.api.users.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -20,6 +21,7 @@ import com.appsdeveloperblog.photoapp.api.users.shared.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 
@@ -71,13 +73,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
        
         
      
-        SecretKey key = Jwts.SIG.HS256.key().build();
-     
-
-		String token =  Jwts.builder()
+       // SecretKey key = Jwts.SIG.HS256.key().build();
+        
+        String token =  Jwts.builder()
 		        .subject(userDetails.getUserId())
 		        .expiration(new Date(System.currentTimeMillis() + expirationTimeMillis)) 
-		        .signWith(key, Jwts.SIG.HS256)
+		        .signWith(getSigningKey())
 		        .compact();
 	                
 	        
@@ -85,5 +86,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	        res.addHeader("userId", userDetails.getUserId());
 
 	}
+	
+	 private SecretKey getSigningKey() {
+		   String key  = "hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739";
+	        byte[] keyBytes = Decoders.BASE64.decode(key);
+	        return Keys.hmacShaKeyFor(keyBytes);
+	    }
+
 	    
 }
